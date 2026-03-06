@@ -5,23 +5,19 @@ chcp 65001 >nul
 echo.
 set user_text=Atualizacao
 if not "%~1"=="" set user_text=%~1
-echo %date% %time% - %user_text%> last-delivery.txt
+:: echo %date% %time% - %user_text%> last-delivery.txt
 
-echo.
-echo -----
-time /t
-echo "Initializing merge request"
-echo -----
-echo.
+:: echo.
+:: echo -----
+:: time /t
+:: echo "Initializing merge request"
+:: echo -----
+:: echo.
 
 git add .
 git commit -m "%user_text%"
 git push origin homo82
 
-git checkout prod82
-git merge homo82 -m "%user_text%"
-git push origin prod82
-git checkout homo82
 echo.
 echo -----
 time /t
