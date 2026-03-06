@@ -1,4 +1,4 @@
-echo off
+@echo off
 setlocal enabledelayedexpansion
 chcp 65001 >nul
 
@@ -10,7 +10,7 @@ if not "%~1"=="" set user_text=%~1
 :: echo.
 :: echo -----
 :: time /t
-:: echo "Initializing merge request"
+:: echo Initializing merge request
 :: echo -----
 :: echo.
 
@@ -21,6 +21,6 @@ git push origin homo82
 echo.
 echo -----
 time /t
-echo "Merge request finished"
+echo Merge request finished
 echo -----
 echo.
