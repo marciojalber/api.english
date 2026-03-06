@@ -1,3 +1,3 @@
 # ENGLISH API
 
-To serve English learning applications
+To serve English learning applications.
