@@ -16,7 +16,7 @@ if not "%~1"=="" set user_text=%~1
 
 git add .
 git commit -m "%user_text%"
-git push origin homo82
+git push origin main
 
 echo.
 echo -----
