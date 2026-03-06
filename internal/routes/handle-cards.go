@@ -18,8 +18,8 @@ func apiCardsHandler(w http.ResponseWriter, r *http.Request) {
     }    
 
 	fname 		:= fmt.Sprintf("data/cards/%s.csv", ctx)
+	_, err 		:= os.Stat(fname)
 
-	_, err := os.Stat(fname)
 	if err != nil {
 	    msg := fmt.Sprintf(`{"err": "invalid_arg", "txt": "Unkown context [%s]."}`, ctx)
         fmt.Fprintln(w, msg)
@@ -55,7 +55,7 @@ func apiCardsHandler(w http.ResponseWriter, r *http.Request) {
 		res_obj = append(res_obj, line)
 	}
 
-	json, err := json.Marshal(res_obj)
+	json, err 		:= json.Marshal(res_obj)
 	
 	if err != nil {
 		panic(err)
