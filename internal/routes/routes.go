@@ -4,6 +4,8 @@ import (
     "fmt"
     "net/http"
     "time"
+
+    "github.com/marciojalber/api.english/pkg/utils"
 )
 
 func NewRouter() http.Handler {
@@ -33,16 +35,11 @@ func logRequests(next http.Handler) http.Handler {
     })
 }
 
-func indexHandler(w http.ResponseWriter, r *http.Request) {
-    if r.URL.Path != "/" {
-        custom404(w, r.URL.Path)
-        return
-    }
-
-    fmt.Fprintln(w, "Index")
-}
-
 func custom404(w http.ResponseWriter, url string) {
-    res := fmt.Sprintf(`{"err": "route_not_found", "txt": "The requested endpoint [%s] does not exist"}`, url)
+    res := utils.ToJson(utils.JsonMap{
+        "err": "route_not_found",
+        "txt": fmt.Sprintf("The requested endpoint [%s] does not exist", url),
+    })
+    // res := fmt.Sprintf(`{"err": "route_not_found", "txt": "The requested endpoint [%s] does not exist"}`, url)
     fmt.Fprint(w, res)
 }

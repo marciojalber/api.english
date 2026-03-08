@@ -1,0 +1,4 @@
+# server.yaml
+
+SERVER:
+  port: 8080

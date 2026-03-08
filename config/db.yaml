@@ -1,0 +1,10 @@
+# db.yaml
+
+DB:
+  default:
+    driver: "mysql"
+    user: "root"
+    password: ""
+    host: "localhost"
+    port: 3306
+    dbname: "english_learn_api"
