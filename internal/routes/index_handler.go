@@ -13,5 +13,5 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    fmt.Fprintln(w, "Index")
+    fmt.Fprintln(w, "Home")
 }

@@ -3,83 +3,131 @@
 package routes
 
 import (
-    "net/http"
-    "fmt"
-    "os"
-    "encoding/csv"
+	"encoding/csv"
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"os"
 
-    "github.com/marciojalber/api.english/pkg/utils"
-    "github.com/marciojalber/api.english/internal/db"
+	"github.com/marciojalber/api.english/internal/dbhelper"
+	"github.com/marciojalber/api.english/internal/entities"
+	"github.com/marciojalber/api.english/pkg/utils"
 )
 
+// HANDLER
 func apiCardsHandler(w http.ResponseWriter, r *http.Request) {
-    ctx := r.URL.Query().Get("context")
+	ctx := r.URL.Query().Get("context")
 
-    if ctx == "" {
-        res := utils.ToJson(utils.JsonMap{
-            "err": "missing_arg",
-            "txt": "Context UNDEFINDED for the cards",
-        })
-        fmt.Fprint(w, res)
-        return
-    }    
+	if ctx == "" {
+		res := utils.ToJson(utils.JsonMap{
+			"err": "missing_arg",
+			"txt": "Context UNDEFINDED for the cards",
+		})
+		fmt.Fprint(w, res)
+		return
+	}
 
-    fname       := fmt.Sprintf("data/cards/%s.csv", ctx)
-    _, err      := os.Stat(fname)
+	if ctx != "COUNTRIES" {
+		fname := fmt.Sprintf("data/cards/%s.csv", ctx)
+		_, err := os.Stat(fname)
 
-    if err != nil {
-        res := utils.ToJson(utils.JsonMap{
-            "err": "invalid_arg",
-            "txt": fmt.Sprintf("Unkown context [%s]", ctx),
-        })
-        fmt.Fprint(w, res)
-        return
-    }
+		if err != nil {
+			res := utils.ToJson(utils.JsonMap{
+				"err": "invalid_arg",
+				"txt": fmt.Sprintf("Unkown context [%s]", ctx),
+			})
+			fmt.Fprint(w, res)
+			return
+		}
 
-    file, err   := os.Open(fname)
-    
-    if err != nil {
-        panic(err)
-    }
-    
-    defer file.Close()
+		getDataFromFile(w, fname)
+		return
+	} else {
+		getDataFromDB(w)
+		return
+	}
+}
 
-    reader          := csv.NewReader(file)
-    reader.Comma    = ';'
-    records, err    := reader.ReadAll()
-    
-    if err != nil {
-        panic(err)
-    }
+// CAPTURE DATA FROM FILE
+func getDataFromFile(w http.ResponseWriter, fname string) {
+	file, err := os.Open(fname)
 
-    labels          := records[0]
-    var res_obj []utils.JsonMap
+	if err != nil {
+		panic(err)
+	}
 
-    for _, row := range records[1:] {
-        line := utils.JsonMap{}
+	defer file.Close()
 
-        for i, val := range row {
-            line[labels[i]] = val
-        }
+	reader := csv.NewReader(file)
+	reader.Comma = ';'
+	records, err := reader.ReadAll()
 
-        res_obj = append(res_obj, line)
-    }
+	if err != nil {
+		panic(err)
+	}
 
-    db, err := db.MyCon()
-    if err != nil {
-        panic(err)
-    }
+	labels := records[0]
+	res_obj := []utils.JsonMap{}
 
-    err = db.Ping()
-    if err != nil {
-        panic(err)
-    }
+	for _, row := range records[1:] {
+		line := utils.JsonMap{}
 
-    res := utils.ToJson(utils.JsonMap{
-        "total": len(res_obj),
-        "my_con": "OK",
-        "items": res_obj,
-    })
+		for i, val := range row {
+			line[labels[i]] = val
+		}
 
-    fmt.Fprint(w, res)
+		res_obj = append(res_obj, line)
+	}
+
+	res := utils.ToJson(utils.JsonMap{
+		"total": len(res_obj),
+		"items": res_obj,
+	})
+
+	fmt.Fprint(w, res)
+}
+
+// CAPTURE DATA FROM DB
+func getDataFromDB(w http.ResponseWriter) {
+	db, err := dbhelper.MyCon()
+	if err != nil {
+		panic(err)
+	}
+
+	cols := []string{"id", "continent", "name", "citizen", "capital", "language"}
+	sql := dbhelper.Select("SELECT :cols FROM country", cols)
+	row, db_err := db.Query(sql)
+	if db_err != nil {
+		panic(db_err)
+	}
+	defer row.Close()
+
+	res_obj := []entities.Country{}
+
+	for {
+		if row.Next() == false {
+			break
+		}
+		country := entities.Country{}
+		s_err := row.Scan(&country.ID, &country.Continent, &country.Name, &country.Citizen, &country.Capital, &country.Language)
+		if s_err != nil {
+			panic(s_err)
+		}
+		res_obj = append(res_obj, country)
+	}
+
+	type Response struct {
+		Total int                `json:"total"`
+		Items []entities.Country `json:"items"`
+	}
+
+	res := Response{
+		Total: len(res_obj),
+		Items: res_obj,
+	}
+
+	txt, _ := json.Marshal(res)
+
+	fmt.Fprint(w, string(txt))
+	// err := row.Scan(BuildScanPointers(user, columns)...)
 }
