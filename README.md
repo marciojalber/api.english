@@ -11,6 +11,7 @@ USED COMMANDS:
 START SERVER
 - air
 
-ROADMEP
+ROADMAP
 - Populate the others tables
 - INTERNAL/ROUTES/CARDS Config the response with the data type according the context
+- INTERNAL/ROUTES/CARDS Map cols to row.Scan()
