@@ -1,10 +1,12 @@
+// internal/entities/country.go
+
 package entities
 
 type Country struct {
-	ID        uint   `json: "id"`
-	Continent string `json: continent`
-	Name      string `json: ciziten`
-	Citizen   string `json: ciziten`
-	Capital   string `json: capital`
-	Language  string `json: language`
+	ID        uint
+	Continent string
+	Name      string
+	Citizen   string
+	Capital   string
+	Language  string
 }

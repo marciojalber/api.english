@@ -3,15 +3,15 @@
 package routes
 
 import (
-    "net/http"
-    "fmt"
+	"fmt"
+	"net/http"
 )
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
-    if r.URL.Path != "/" {
-        custom404(w, r.URL.Path)
-        return
-    }
+	if r.URL.Path != "/" {
+		custom404(w, r.URL.Path)
+		return
+	}
 
-    fmt.Fprintln(w, "Home")
+	fmt.Fprintln(w, "Home")
 }

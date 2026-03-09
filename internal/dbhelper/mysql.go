@@ -5,7 +5,6 @@ package dbhelper
 import (
 	"database/sql"
 	"fmt"
-	"strings"
 
 	_ "github.com/go-sql-driver/mysql"
 
@@ -34,8 +33,4 @@ func MyCon() (*sql.DB, error) {
 	}
 
 	return res, nil
-}
-
-func Select(sql string, cols []string) string {
-	return strings.Replace(sql, ":cols", strings.Join(cols, ", "), 1)
 }
