@@ -15,10 +15,10 @@ import (
 )
 
 // SERVICE
-func apiCardsService(w http.ResponseWriter, r *http.Request) {
+func ApiCardsService(w http.ResponseWriter, r *http.Request) {
 	ctx := r.URL.Query().Get("context")
 
-	if !ctx {
+	if ctx != "" {
 		// Write the code to get all the cards
 	}
 

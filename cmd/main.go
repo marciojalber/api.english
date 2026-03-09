@@ -6,13 +6,13 @@ import (
     "fmt"
     "net/http"
     
-    "github.com/marciojalber/api.english/internal/config"
-    "github.com/marciojalber/api.english/internal/routes"
+    "github.com/marciojalber/api.english/internal/handler"
+    "github.com/marciojalber/api.english/internal/router"
 )
 
 func main() {
-    cfg     := config.Load()
-    router  := routes.NewRouter()
+    cfg     := handler.Config.Load()
+    router  := router.NewRouter()
     addr    := fmt.Sprintf(":%d", cfg.SERVER.Port)
     err     := http.ListenAndServe(addr, router)
 

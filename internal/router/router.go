@@ -1,18 +1,20 @@
-package handler
+// internal/handler/router.go
+
+package router
 
 import (
 	"fmt"
 	"net/http"
 	"time"
 
-	"github.com/marciojalber/api.english/pkg/utils"
+	"github.com/marciojalber/api.english/internal/service"
 )
 
 func NewRouter() http.Handler {
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/", indexService)
-	mux.HandleFunc("/api/cards", apiCardsService)
+	mux.HandleFunc("/", service.IndexService)
+	mux.HandleFunc("/api/cards", service.ApiCardsService)
 
 	return logRequests(mux)
 }
@@ -36,13 +38,4 @@ func logRequests(next http.Handler) http.Handler {
 		w.WriteHeader(http.StatusNotFound)
 		next.ServeHTTP(w, r)
 	})
-}
-
-func custom404(w http.ResponseWriter, url string) {
-	res := utils.ToJson(utils.JsonMap{
-		"err": "route_not_found",
-		"txt": fmt.Sprintf("The requested endpoint [%s] does not exist", url),
-	})
-	// res := fmt.Sprintf(`{"err": "route_not_found", "txt": "The requested endpoint [%s] does not exist"}`, url)
-	fmt.Fprint(w, res)
 }

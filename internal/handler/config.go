@@ -11,11 +11,10 @@ import (
 
 type ConfigHandler struct{}
 
+var cfg *ConfigSet
 var Config ConfigHandler = ConfigHandler{}
 
-var cfg *ConfigSet
-
-func (Config *ConfigHandler) Load() *Config {
+func (config *ConfigHandler) Load() *ConfigSet {
 	if cfg != nil {
 		return cfg
 	}
