@@ -1,18 +1,20 @@
 // internal/dbhelper/mysql.go
 
-package dbhelper
+package handler
 
 import (
 	"database/sql"
 	"fmt"
 
 	_ "github.com/go-sql-driver/mysql"
-
-	"github.com/marciojalber/api.english/internal/config"
 )
 
-func MyCon() (*sql.DB, error) {
-	db := config.Load().DB
+type DBHandler struct{}
+
+var DB DBHandler = DBHandler{}
+
+func (DB *DBHandler) MyCon() (*sql.DB, error) {
+	db := Config.Load().DB
 	dsn := fmt.Sprintf(
 		"%s:%s@tcp(%s:%d)/%s?parseTime=true",
 		db["default"].User,

@@ -1,8 +1,8 @@
 // internal/config/types.go
 
-package config
+package handler
 
-type Config struct {
+type ConfigSet struct {
 	SERVER struct {
 		Port int `yaml:"port"`
 	} `yaml:"SERVER"`

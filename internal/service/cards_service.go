@@ -1,6 +1,6 @@
 // internal/routes/cards_handler.go
 
-package routes
+package service
 
 import (
 	"encoding/csv"
@@ -9,13 +9,13 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/marciojalber/api.english/internal/dbhelper"
-	"github.com/marciojalber/api.english/internal/entities"
+	"github.com/marciojalber/api.english/internal/handler"
+	"github.com/marciojalber/api.english/internal/repo"
 	"github.com/marciojalber/api.english/pkg/utils"
 )
 
-// HANDLER
-func apiCardsHandler(w http.ResponseWriter, r *http.Request) {
+// SERVICE
+func apiCardsService(w http.ResponseWriter, r *http.Request) {
 	ctx := r.URL.Query().Get("context")
 
 	if !ctx {
@@ -80,7 +80,7 @@ func getDataFromFile(w http.ResponseWriter, ctx string) {
 
 // CAPTURE DATA FROM DB
 func getDataFromDB(w http.ResponseWriter) {
-	db, err := dbhelper.MyCon()
+	db, err := handler.DB.MyCon()
 	if err != nil {
 		panic(err)
 	}
@@ -99,14 +99,14 @@ func getDataFromDB(w http.ResponseWriter) {
 	}
 	defer row.Close()
 
-	countries := []entities.Country{}
+	countries := []repo.Country{}
 
 	for {
 		if !row.Next() {
 			break
 		}
 
-		country := entities.Country{}
+		country := repo.Country{}
 		err := row.Scan(
 			&country.ID,
 			&country.Continent,
@@ -122,8 +122,8 @@ func getDataFromDB(w http.ResponseWriter) {
 	}
 
 	type Response struct {
-		Total int                `json:"total"`
-		Items []entities.Country `json:"items"`
+		Total int            `json:"total"`
+		Items []repo.Country `json:"items"`
 	}
 
 	res := Response{

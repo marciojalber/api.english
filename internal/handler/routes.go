@@ -1,4 +1,4 @@
-package routes
+package handler
 
 import (
 	"fmt"
@@ -11,8 +11,8 @@ import (
 func NewRouter() http.Handler {
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/", indexHandler)
-	mux.HandleFunc("/api/cards", apiCardsHandler)
+	mux.HandleFunc("/", indexService)
+	mux.HandleFunc("/api/cards", apiCardsService)
 
 	return logRequests(mux)
 }

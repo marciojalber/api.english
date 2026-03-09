@@ -1,6 +1,6 @@
 // internal/entities/country.go
 
-package entities
+package repo
 
 type Country struct {
 	ID        uint

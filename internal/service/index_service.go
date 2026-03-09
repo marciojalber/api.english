@@ -1,13 +1,13 @@
 // internal/routes/index_handler.go
 
-package routes
+package service
 
 import (
 	"fmt"
 	"net/http"
 )
 
-func indexHandler(w http.ResponseWriter, r *http.Request) {
+func indexService(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		custom404(w, r.URL.Path)
 		return
