@@ -12,6 +12,5 @@ START SERVER
 - air
 
 ROADMAP
-- Populate the others tables
-- INTERNAL/ROUTES/CARDS Config the response with the data type according the context
-- INTERNAL/ROUTES/CARDS Map cols to row.Scan()
+- INTERNAL/ROUTES/CARDS API/CARDS Must to return all cards if none is specified
+
