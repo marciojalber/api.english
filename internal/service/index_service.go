@@ -1,12 +1,11 @@
-// internal/routes/index_handler.go
+// internal/routes/index_service.go
 
 package service
 
 import (
 	"fmt"
 	"net/http"
-
-	"github.com/marciojalber/api.english/pkg/utils"
+	"encoding/json"
 )
 
 func IndexService(w http.ResponseWriter, r *http.Request) {
@@ -19,10 +18,9 @@ func IndexService(w http.ResponseWriter, r *http.Request) {
 }
 
 func custom404(w http.ResponseWriter, url string) {
-	res := utils.ToJson(utils.JsonMap{
+	res, _ := json.Marshal(map[string]string{
 		"err": "route_not_found",
 		"txt": fmt.Sprintf("The requested endpoint [%s] does not exist", url),
 	})
-	// res := fmt.Sprintf(`{"err": "route_not_found", "txt": "The requested endpoint [%s] does not exist"}`, url)
-	fmt.Fprint(w, res)
+	fmt.Fprint(w, string(res))
 }

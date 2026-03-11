@@ -1,4 +1,4 @@
-// internal/routes/cards_handler.go
+// internal/routes/cards_service.go
 
 package service
 
@@ -9,9 +9,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/marciojalber/api.english/internal/handler"
+	"github.com/marciojalber/api.english/internal/src"
 	"github.com/marciojalber/api.english/internal/repo"
-	"github.com/marciojalber/api.english/pkg/utils"
 )
 
 // SERVICE
@@ -36,11 +35,11 @@ func getDataFromFile(w http.ResponseWriter, ctx string) {
 	_, err := os.Stat(fname)
 
 	if err != nil {
-		res := utils.ToJson(utils.JsonMap{
+		res, _ := json.Marshal(map[string]string{
 			"err": "invalid_arg",
 			"txt": fmt.Sprintf("Unkown context [%s]", ctx),
 		})
-		fmt.Fprint(w, res)
+		fmt.Fprint(w, string(res))
 		return
 	}
 
@@ -58,10 +57,10 @@ func getDataFromFile(w http.ResponseWriter, ctx string) {
 	}
 
 	labels := records[0]
-	lines := []utils.JsonMap{}
+	lines := []map[string]string{}
 
 	for _, row := range records[1:] {
-		line := utils.JsonMap{}
+		line := map[string]string{}
 
 		for i, val := range row {
 			line[labels[i]] = val
@@ -70,57 +69,46 @@ func getDataFromFile(w http.ResponseWriter, ctx string) {
 		lines = append(lines, line)
 	}
 
-	res := utils.ToJson(utils.JsonMap{
+	res, _ := json.Marshal(map[string]any{
 		"total": len(lines),
 		"items": lines,
 	})
 
-	fmt.Fprint(w, res)
+	fmt.Fprint(w, string(res))
 }
 
 // CAPTURE DATA FROM DB
 func getDataFromDB(w http.ResponseWriter) {
-	db, err := handler.DB.MyCon()
+	db, err := src.DB.MyCon()
 	if err != nil {
 		panic(err)
 	}
 
-	sql := `
-		SELECT 	id,
-				continent,
-				name,
-				citizen,
-				capital,
-				language
-		FROM 	country	`
-	row, err := db.Query(sql)
+	fields := []string{
+		"id",
+		"continent",
+		"name",
+		"citizen",
+		"capital",
+		"language",
+	}
+	var countryModel repo.Country
+	columns, err := countryModel.JoinFields(fields)
 	if err != nil {
 		panic(err)
 	}
-	defer row.Close()
-
-	countries := []repo.Country{}
-
-	for {
-		if !row.Next() {
-			break
-		}
-
-		country := repo.Country{}
-		err := row.Scan(
-			&country.ID,
-			&country.Continent,
-			&country.Name,
-			&country.Citizen,
-			&country.Capital,
-			&country.Language,
-		)
-		if err != nil {
-			panic(err)
-		}
-		countries = append(countries, country)
+	sql := "SELECT " + columns + " FROM	" + countryModel.TableName()
+	rows, err := db.Query(sql)
+	if err != nil {
+		panic(err)
 	}
+	defer rows.Close()
 
+	countries, err := countryModel.Scan(rows)
+	if err != nil {
+	    panic(err)
+	}
+	
 	type Response struct {
 		Total int            `json:"total"`
 		Items []repo.Country `json:"items"`
