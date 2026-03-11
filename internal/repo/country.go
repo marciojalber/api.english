@@ -7,6 +7,8 @@ import (
 	"github.com/marciojalber/api.english/internal/src"
 )
 
+// @todo To capture tableName and repoName directly from here
+// @todo To create a script to mount automaticly from all repos [FieldMap] and [Scan]
 type Country struct {
 	ID        uint `col: "id"`
 	Continent string `col: "continent"`
@@ -14,7 +16,7 @@ type Country struct {
 	Citizen   string `col: "citizen"`
 	Capital   string `col: "capital"`
 	Language  string `col: "language"`
-}
+} `tableName: "country" repoName: "Country"`
 
 func (Country) RepoName() string {
 	return "Country"
