@@ -9,8 +9,9 @@ USED COMMANDS:
 - LIVE RELOAD go install github.com/air-verse/air@latest
 
 START SERVER
-- air
+- Option 1 - air
+- Option 2 - go generate ./... + go run cmd\main.go
 
 ROADMAP
+- INTERNAL/ROUTES/CARDS Mount files repo/__{repo}.go
 - INTERNAL/ROUTES/CARDS API/CARDS Must to return all cards if none is specified
-
