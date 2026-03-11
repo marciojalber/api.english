@@ -1,3 +1,4 @@
+//go:generate go run ../generator/main.go
 // cmd/main.go
 
 package main

@@ -16,7 +16,7 @@ type Country struct {
 	Citizen   string `col: "citizen"`
 	Capital   string `col: "capital"`
 	Language  string `col: "language"`
-} `tableName: "country" repoName: "Country"`
+}
 
 func (Country) RepoName() string {
 	return "Country"
