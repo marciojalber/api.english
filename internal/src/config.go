@@ -23,6 +23,7 @@ func (config *ConfigHandler) Load() *ConfigSet {
 	contexts := [...]string{
 		"db",
 		"server",
+		"system",
 	}
 
 	for _, ctx := range contexts {

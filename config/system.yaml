@@ -1,0 +1,5 @@
+# server.yaml
+
+APP_STRUCTURE:
+  repo: "/internal/repo"
+  service: "/internal/service"

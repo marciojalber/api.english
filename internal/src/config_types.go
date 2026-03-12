@@ -7,7 +7,8 @@ type ConfigSet struct {
 		Port int `yaml:"port"`
 	} `yaml:"SERVER"`
 
-	DB map[string]DBConfig `yaml:"DB"`
+	DB            map[string]DBConfig `yaml:"DB"`
+	APP_STRUCTURE map[string]string   `yaml:"APP_STRUCTURE"`
 }
 
 type DBConfig struct {
