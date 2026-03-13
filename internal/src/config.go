@@ -5,6 +5,8 @@ package src
 import (
 	"fmt"
 	"os"
+	"strings"
+	"os/exec"
 
 	"gopkg.in/yaml.v3"
 )
@@ -27,7 +29,7 @@ func (config *ConfigHandler) Load() *ConfigSet {
 	}
 
 	for _, ctx := range contexts {
-		path := fmt.Sprintf("config/%s.yaml", ctx)
+		path := fmt.Sprintf(CurrentDir() + "/config/%s.yaml", ctx)
 		data, err := os.ReadFile(path)
 
 		if err != nil {
@@ -42,4 +44,14 @@ func (config *ConfigHandler) Load() *ConfigSet {
 	}
 
 	return cfg
+}
+
+func CurrentDir() string {
+	cmd := exec.Command("go", "list", "-m", "-f", "{{.Dir}}")
+	out, err := cmd.Output()
+	if err != nil {
+		panic(err)
+	}
+
+	return strings.TrimSpace(string(out))
 }

@@ -2,8 +2,9 @@ root = "."
 tmp_dir = "tmp"
 
 [build]
-pre_cmd     = ["go generate ./..."]
-cmd         = "go build -o ./tmp/api.exe ./cmd/main.go"
-bin         = "tmp/api.exe"
-include_ext = ["go", "yaml"]
-exclude_dir = [".git", "vendor", "tmp"]
+pre_cmd         = ["go generate ./..."]
+cmd             = "go build -o ./tmp/api.exe ./cmd/main.go"
+bin             = "tmp/api.exe"
+include_ext     = ["go", "yaml"]
+exclude_dir     = [".git", "vendor", "tmp"]
+exclude_regex   = ["__.*\\.go"]

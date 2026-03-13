@@ -84,20 +84,16 @@ func getDataFromDB(w http.ResponseWriter) {
 		panic(err)
 	}
 
-	fields := []string{
-		"id",
-		"continent",
-		"name",
-		"citizen",
-		"capital",
-		"language",
-	}
 	var countryModel repo.Country
-	columns, err := countryModel.JoinFields(fields)
-	if err != nil {
-		panic(err)
-	}
-	sql := "SELECT " + columns + " FROM	" + countryModel.TableName()
+	sql := `
+		SELECT
+			id,
+			continent,
+			name,
+			citizen,
+			capital,
+			language,
+		FROM	` + countryModel.TableName()
 	rows, err := db.Query(sql)
 	if err != nil {
 		panic(err)
