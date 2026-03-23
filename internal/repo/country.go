@@ -26,18 +26,6 @@ func (Country) TableName()string {
     return "country"
 }
 
-// @todo To replace by the reflection on the struct
-func (country *Country) FieldMap() map[string]any{
-    return map[string]any{
-        "id":        &country.ID,
-        "continent": &country.Continent,
-        "name":      &country.Name,
-        "citizen":   &country.Citizen,
-        "capital":   &country.Capital,
-        "language":  &country.Language,
-    }
-}
-
 // @todo Replace src.GetScanPointer for country.ScanPointers(fields)
 // @todo To transfer part of it into DAO
 // Runs the Scan method
