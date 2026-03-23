@@ -10,12 +10,12 @@ import (
 // @todo To capture tableName and repoName directly from here
 // @todo To create a script to mount automaticly from all repos [FieldMap] and [Scan]
 type Country struct {
-	ID        uint `col: "id"`
-	Continent string `col: "continent"`
-	Name      string `col: "name"`
-	Citizen   string `col: "citizen"`
-	Capital   string `col: "capital"`
-	Language  string `col: "language"`
+	ID        uint `col:"id"`
+	Continent string `col:"continent"`
+	Name      string `col:"name"`
+	Citizen   string `col:"citizen"`
+	Capital   string `col:"capital"`
+	Language  string `col:"language"`
 }
 
 func (Country) RepoName() string {
@@ -36,32 +36,6 @@ func (country *Country) FieldMap() map[string]any{
 		"capital":   &country.Capital,
 		"language":  &country.Language,
 	}
-}
-
-/* @ To pass part to the DAO and remain here only the cases
-func (c *Country) ScanPointers(fields []string) ([]any, error) {
-
-    ptrs := make([]any, len(fields))
-
-    for i, f := range fields {
-        switch f {
-	        case "id": ptrs[i] = &c.ID
-	        case "continent": ptrs[i] = &c.Continent
-	        case "name": ptrs[i] = &c.Name
-	        case "citizen": ptrs[i] = &c.Citizen
-	        case "capital": ptrs[i] = &c.Capital
-	        case "language": ptrs[i] = &c.Language
-	        default: return nil, fmt.Errorf("column %s does not exist in Country", f)
-        }
-    }
-
-    return ptrs, nil
-}
-*/
-
-// Validate the existence of fields once and returns the fields as string
-func (country *Country) JoinFields(fields []string) (string, error) {
-    return src.JoinFields(fields, country.FieldMap(), country.RepoName())
 }
 
 // @todo Replace src.GetScanPointer for country.ScanPointers(fields)

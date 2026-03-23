@@ -14,7 +14,7 @@ type DBHandler struct{}
 var DB DBHandler = DBHandler{}
 
 func (DB *DBHandler) MyCon() (*sql.DB, error) {
-	db := Config.Load().DB
+	db := ConfigGet().DB
 	dsn := fmt.Sprintf(
 		"%s:%s@tcp(%s:%d)/%s?parseTime=true",
 		db["default"].User,
