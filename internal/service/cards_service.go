@@ -85,9 +85,12 @@ func getDataFromDB(w http.ResponseWriter) {
 	}
 
 	var countryModel repo.Country
+<<<<<<< HEAD
 	if err != nil {
 		panic(err)
 	}
+=======
+>>>>>>> 1d214e3a2fe5e4da03403606d81c52ca4fa2af06
 	sql := `
 		SELECT
 			id,
@@ -95,7 +98,11 @@ func getDataFromDB(w http.ResponseWriter) {
 			name,
 			citizen,
 			capital,
+<<<<<<< HEAD
 			language
+=======
+			language,
+>>>>>>> 1d214e3a2fe5e4da03403606d81c52ca4fa2af06
 		FROM	` + countryModel.TableName()
 	rows, err := db.Query(sql)
 	if err != nil {
