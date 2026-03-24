@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/marciojalber/api.english/internal/src"
 	"github.com/marciojalber/api.english/internal/repo"
@@ -17,6 +18,17 @@ import (
 func ApiCardsService(w http.ResponseWriter, r *http.Request) {
 	ctx := r.URL.Query().Get("context")
 
+	/*
+	ch := make(chan bool, 3)
+	go teste(ch, "A")
+	go teste(ch, "B")
+	go teste(ch, "C")
+	<-ch
+	<-ch
+	<-ch
+	fmt.Println("Fim")
+	*/
+	
 	if ctx != "" {
 		// Write the code to get all the cards
 	}
@@ -27,6 +39,14 @@ func ApiCardsService(w http.ResponseWriter, r *http.Request) {
 	}
 
 	getDataFromDB(w)
+}
+
+// CAPTURE DATA FROM FILE
+func teste(ch chan bool, ctx string) {
+	for a := 0; a < 10; a++ {
+		fmt.Println(ctx + " - " + strconv.Itoa(a+1))
+	}
+	ch <- true
 }
 
 // CAPTURE DATA FROM FILE
