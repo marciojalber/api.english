@@ -11,7 +11,6 @@ package repo
 
 import (
     "database/sql"
-    "github.com/marciojalber/api.english/internal/src"
     "fmt"
 )
 
@@ -39,15 +38,18 @@ func (%s) Scan(rows *sql.Rows) ([]%s, error) {
     collection := []%s{}
 
     for rows.Next() {
-        instance := %s{}
-        
-        ptrs, err := instance.ScanPointers(fields)
+        repo := %s{}
+
+        ptrs, err := repo.ScanPointers(fields)
+        if err != nil {
+            return nil, err
+        }
 
         if err := rows.Scan(ptrs...); err != nil {
             return nil, err
         }
 
-        collection = append(collection, instance)
+        collection = append(collection, repo)
     }
 
     return collection, nil

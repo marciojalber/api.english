@@ -2,8 +2,8 @@ root = "."
 tmp_dir = "tmp"
 
 [build]
-pre_cmd         = ["go run ./cmd/generator/."]
-cmd             = "go build -o ./tmp/api.exe ./cmd/api/."
+pre_cmd         = ["go run ./cmd/generator"]
+cmd             = "go build -o ./tmp/api.exe ./cmd/api"
 bin             = "tmp/api.exe"
 include_ext     = ["go", "yaml"]
-exclude_dir     = [".git", "vendor", "tmp"]
+exclude_dir     = ["vendor"]

@@ -31,29 +31,28 @@ func ApiCardsService(w http.ResponseWriter, r *http.Request) {
 
 // CAPTURE DATA FROM FILE
 func getDataFromFile(w http.ResponseWriter, ctx string) {
-	fname := fmt.Sprintf("data/cards/%s.csv", ctx)
+	fname := fmt.Sprintf("internal/data/cards/%s.csv", ctx)
 	_, err := os.Stat(fname)
 
 	if err != nil {
-		res, _ := json.Marshal(map[string]string{
-			"err": "invalid_arg",
-			"txt": fmt.Sprintf("Unkown context [%s]", ctx),
-		})
-		fmt.Fprint(w, string(res))
+		sendError(w, "file_not_found", ctx)
 		return
 	}
 
 	file, err := os.Open(fname)
 	if err != nil {
-		panic(err)
+		sendError(w, "file_not_accessable", fname)
+		return
 	}
 	defer file.Close()
 
 	reader := csv.NewReader(file)
 	reader.Comma = ';'
+
 	records, err := reader.ReadAll()
 	if err != nil {
-		panic(err)
+		sendError(w, "file_not_readable", fname)
+		return
 	}
 
 	labels := records[0]
@@ -81,16 +80,10 @@ func getDataFromFile(w http.ResponseWriter, ctx string) {
 func getDataFromDB(w http.ResponseWriter) {
 	db, err := src.DB.MyCon()
 	if err != nil {
-		panic(err)
+		sendError(w, "db_error")
 	}
 
 	var countryModel repo.Country
-<<<<<<< HEAD
-	if err != nil {
-		panic(err)
-	}
-=======
->>>>>>> 1d214e3a2fe5e4da03403606d81c52ca4fa2af06
 	sql := `
 		SELECT
 			id,
@@ -98,11 +91,7 @@ func getDataFromDB(w http.ResponseWriter) {
 			name,
 			citizen,
 			capital,
-<<<<<<< HEAD
 			language
-=======
-			language,
->>>>>>> 1d214e3a2fe5e4da03403606d81c52ca4fa2af06
 		FROM	` + countryModel.TableName()
 	rows, err := db.Query(sql)
 	if err != nil {
@@ -115,16 +104,73 @@ func getDataFromDB(w http.ResponseWriter) {
 	    panic(err)
 	}
 	
-	type Response struct {
+	cards := struct {
 		Total int            `json:"total"`
 		Items []repo.Country `json:"items"`
-	}
-
-	res := Response{
+	}{
 		Total: len(countries),
 		Items: countries,
 	}
 
-	txt, _ := json.Marshal(res)
+	txt, _ := json.Marshal(cards)
+	sendRes(w, txt)
+}
+
+type apiError struct {
+    Status int
+    Err    string
+    Txt    string
+}
+
+var errorMsg = map[string]apiError{
+	"file_not_found" 		: {
+		Status 	: http.StatusNotFound,
+		Err 	: "invalid_arg",
+		Txt 	: "Unkown context [%s]",
+	},
+	"file_not_accessable" 	: {
+		Status 	: http.StatusForbidden,
+		Err 	: "file_access",
+		Txt 	: "Arquivo [%s] não encontrado.",
+	},
+	"file_not_readable" 	: {
+		Status 	: http.StatusInternalServerError,
+		Err 	: "file_access",
+		Txt 	: "Não foi possível ler o arquivo [%s].",
+	},
+	"db_error" 				: {
+		Status 	: http.StatusInternalServerError,
+		Err 	: "db_not_accessable",
+		Txt 	: "Não foi possível conectar ao banco-de-dados.",
+	},
+}
+
+func sendError(w http.ResponseWriter, key string, args ...any) {
+    msg, ok := errorMsg[key]
+    if !ok {
+        msg = apiError{
+            Status: http.StatusInternalServerError,
+            Err:    "unknown_error",
+            Txt:    "The error informed is invalid",
+        }
+    }
+
+    response := map[string]string{
+        "err": msg.Err,
+        "txt": fmt.Sprintf(msg.Txt, args...),
+    }
+
+	res, err := json.Marshal(response)
+    if err != nil {
+        http.Error(w, "internal error", http.StatusInternalServerError)
+        return
+    }
+
+    w.WriteHeader(msg.Status)
+    w.Write(res)
+}
+
+func sendRes(w http.ResponseWriter, txt []byte) {
+	w.WriteHeader(http.StatusOK)
 	fmt.Fprint(w, string(txt))
 }

@@ -6,8 +6,6 @@ import (
 	"os"
 	"fmt"
 	"log"
-	"strings"
-	"os/exec"
 
 	"gopkg.in/yaml.v3"
 )

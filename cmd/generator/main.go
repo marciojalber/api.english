@@ -5,7 +5,6 @@ package main
 
 import (
     "log"
-    "regexp"
     "fmt"
     "os"
     "go/ast"
@@ -29,9 +28,9 @@ type StructInfo struct {
 }
 
 func main() {
-    dir     := src.DirBase() + "/internal/repo"
-    fset    := token.NewFileSet()
-    files, err := filepath.Glob(filepath.Join(dir, "*.go"))
+    dir         := src.DirBase() + "/internal/repo"
+    fset        := token.NewFileSet()
+    files, err  := filepath.Glob(filepath.Join(dir, "*.go"))
 
     if err != nil {
         panic(err)
@@ -39,16 +38,13 @@ func main() {
 
     for _, file := range files {
 
-        if file[0:2] == "__" {
+        len_file        := len(file)
+        file_sufix_len  := len_file - 7
+        if file[file_sufix_len:] == "_dao.go" {
             continue
         }
 
-        re := regexp.MustCompile(`__`)
-        if re.MatchString(file) {
-            continue
-        }
-
-        file_dest := dir + "/__" + file[len(dir)+1:]
+        file_dest := file[:len_file-3] + "_dao.go"
 
         infoDest, err := os.Stat(file_dest)
         if err == nil {
@@ -124,11 +120,10 @@ func main() {
                 }
                 var out strings.Builder
 
-                filename := "__" + strings.ToLower(info.Name) + ".go"
-                path := filepath.Join(dir, filename)
+                filename := file_dest[len(dir)+1:]
                 fmt.Fprintf(&out, repoModel, filename, info.Name, cases.String(), info.Name, info.Name, info.Name, info.Name, info.Name)
 
-                err := os.WriteFile(path, []byte(out.String()), 0644)
+                err := os.WriteFile(file_dest, []byte(out.String()), 0644)
                 if err != nil {
                     panic(err)
                 }
