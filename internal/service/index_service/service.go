@@ -8,7 +8,7 @@ import (
 	"encoding/json"
 )
 
-func IndexService(w http.ResponseWriter, r *http.Request) {
+func Service(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		custom404(w, r.URL.Path)
 		return

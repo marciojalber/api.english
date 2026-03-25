@@ -8,7 +8,8 @@ import (
 	"time"
 	"strings"
 
-	"github.com/marciojalber/api.english/internal/service"
+	"github.com/marciojalber/api.english/internal/service/index_service"
+	"github.com/marciojalber/api.english/internal/service/cards_service"
 )
 
 type statusWriter struct {
@@ -34,8 +35,8 @@ func (w *statusWriter) Write(b []byte) (int, error) {
 func NewRouter() http.Handler {
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/", service.IndexService)
-	mux.HandleFunc("/api/cards", service.ApiCardsService)
+	mux.HandleFunc("/", index_service.Service)
+	mux.HandleFunc("/api/cards", cards_service.Service)
 
 	return logRequests(mux)
 }
