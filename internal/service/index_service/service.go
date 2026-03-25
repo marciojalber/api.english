@@ -1,4 +1,4 @@
-// internal/routes/index_service.go
+// internal/routes/index_service/service.go
 
 package service
 

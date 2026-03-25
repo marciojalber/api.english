@@ -1,6 +1,6 @@
-// internal/routes/cards_service.go
+// internal/routes/cards_service/errors.go
 
-package service
+package cards_service
 
 import (
 	"github.com/marciojalber/api.english/internal/src"

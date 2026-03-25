@@ -1,4 +1,4 @@
-// internal/routes/cards_service.go
+// internal/routes/cards_service/service.go
 
 package service
 
