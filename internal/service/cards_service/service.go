@@ -32,14 +32,17 @@ func ApiCardsService(w http.ResponseWriter, r *http.Request) {
 
 // CAPTURE DATA FROM FILE
 func getDataFromFile(w http.ResponseWriter, ctx string) {
+	
+	// Test the file
 	fname := fmt.Sprintf("internal/data/cards/%s.csv", ctx)
-	_, err := os.Stat(fname)
 
+	_, err := os.Stat(fname)
 	if err != nil {
 		src.SendError(w, "file_not_found", ctx)
 		return
 	}
 
+	// Open the file
 	file, err := os.Open(fname)
 	if err != nil {
 		src.SendError(w, "file_not_accessable", fname)
@@ -47,7 +50,8 @@ func getDataFromFile(w http.ResponseWriter, ctx string) {
 	}
 	defer file.Close()
 
-	reader := csv.NewReader(file)
+	// Read the file
+	reader 		 := csv.NewReader(file)
 	reader.Comma = ';'
 
 	records, err := reader.ReadAll()
@@ -56,9 +60,11 @@ func getDataFromFile(w http.ResponseWriter, ctx string) {
 		return
 	}
 
+	// Capture the label
 	labels := records[0]
-	lines := []map[string]string{}
+	lines  := []map[string]string{}
 
+	// Capture the lines
 	for _, row := range records[1:] {
 		line := map[string]string{}
 
@@ -69,6 +75,7 @@ func getDataFromFile(w http.ResponseWriter, ctx string) {
 		lines = append(lines, line)
 	}
 
+	// Send response
 	res, _ := json.Marshal(map[string]any{
 		"total": len(lines),
 		"items": lines,
@@ -79,11 +86,14 @@ func getDataFromFile(w http.ResponseWriter, ctx string) {
 
 // CAPTURE DATA FROM DB
 func getDataFromDB(w http.ResponseWriter) {
+
+	// Open the database
 	db, err := src.DB.MyCon()
 	if err != nil {
 		src.SendError(w, "db_error")
 	}
 
+	// Execute the query
 	var countryModel repo.Country
 	sql := `
 		SELECT
@@ -94,17 +104,20 @@ func getDataFromDB(w http.ResponseWriter) {
 			capital,
 			language
 		FROM	` + countryModel.TableName()
+	
 	rows, err := db.Query(sql)
 	if err != nil {
 		panic(err)
 	}
 	defer rows.Close()
 
+	// Capture the values
 	countries, err := countryModel.Scan(rows)
 	if err != nil {
 	    panic(err)
 	}
 	
+	// Send response
 	cards := struct {
 		Total int            `json:"total"`
 		Items []repo.Country `json:"items"`
